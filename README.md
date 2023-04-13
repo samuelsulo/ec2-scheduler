@@ -1,1 +1,2 @@
-# ec2-scheduler
+# EC2 Scheduler
+This repository contains the source code for the EC2 Scheduler. The EC2 Scheduler is a tool that allows you to schedule the start and stop of your EC2 instances. It is a simple tool that can be used to save money on your AWS bill by stopping your EC2 instances when they are not in use.
