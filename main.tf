@@ -15,6 +15,24 @@ locals {
   ]
 }
 
+module "lambda_instance_scheduler" {
+  source = "../terraform-aws-lambda"
+
+  function_name = "instance-scheduler"
+  description   = "Start/Stop EC2 instances based on schedule."
+  root_dir      = "${path.module}/lambdas/instance-scheduler"
+  handler       = "index.handler"
+  runtime       = "nodejs18.x"
+  build_command = "yarn build"
+
+  files_to_watch = [
+    "src/**/*.ts",
+    "package.json",
+    "yarn.lock",
+    "tsconfig.json"
+  ]
+}
+
 resource "aws_scheduler_schedule" "this" {
   count = length(local.schedules)
 
@@ -32,7 +50,7 @@ resource "aws_scheduler_schedule" "this" {
     role_arn = aws_iam_role.this[count.index].arn
 
     input = jsonencode({
-      FunctionName   = ""
+      FunctionName   = module.lambda_instance_scheduler.arn
       InvocationType = "Event"
       Payload = jsonencode({
         action = local.schedules[count.index].action
@@ -81,7 +99,7 @@ data "aws_iam_policy_document" "invoke_scheduler" {
     ]
 
     resources = [
-      "arn:aws:lambda:*:*:function:*"
+      module.lambda_instance_scheduler.arn
     ]
   }
 }

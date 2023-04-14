@@ -1,0 +1,27 @@
+{
+  "name": "instance-scheduler",
+  "version": "1.0.0",
+  "description": "EC2 Instance Scheduler",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/samuelsulo/ec2-scheduler"
+  },
+  "scripts": {
+    "prebuild": "yarn --frozen-lockfile && rm -rf build && mkdir build",
+    "build": "tsc",
+    "postbuild": "cp package.json yarn.lock build && cd build && yarn --production --frozen-lockfile",
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --fix"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.114",
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/parser": "^5.43.0",
+    "eslint": "^8.28.0",
+    "typescript": "4.8.4"
+  },
+  "dependencies": {
+    "@aws-lambda-powertools/logger": "^1.7.0"
+  }
+}
