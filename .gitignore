@@ -212,7 +212,8 @@ terraform.rc
 # terragrunt cache directories
 **/.terragrunt-cache/*
 
-# Lambda build artifacts
+# Build artifacts
 build
+build.zip
 
 # End of https://www.toptal.com/developers/gitignore/api/terraform,terragrunt,node
