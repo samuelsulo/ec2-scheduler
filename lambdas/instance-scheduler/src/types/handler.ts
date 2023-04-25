@@ -1,13 +1,11 @@
 export enum Action {
-  OPEN = 'open',
-  CLOSE = 'close'
+  START = 'start',
+  STOP = 'stop'
 }
 
 export type HandlerInput = {
+  schedule: string;
   action: Action;
 };
 
-export interface HandlerOutput {
-  statusCode: number;
-  body: string;
-}
+export type HandlerOutput = void;

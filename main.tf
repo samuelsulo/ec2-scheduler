@@ -4,13 +4,19 @@ locals {
       name                = var.schedule_start_instances_name
       role_name           = var.schedule_start_instances_name
       schedule_expression = "cron(0 9 ? * MON-FRI *)"
-      action              = "start"
+      payload = jsonencode({
+        action   = "start"
+        schedule = "office-hours"
+      })
     },
     {
       name                = var.schedule_stop_instances_name
       role_name           = var.schedule_stop_instances_name
       schedule_expression = "cron(0 13 ? * MON-FRI *)"
-      action              = "stop"
+      payload = jsonencode({
+        action   = "stop"
+        schedule = "office-hours"
+      })
     }
   ]
 }
@@ -30,6 +36,26 @@ module "lambda_instance_scheduler" {
     "package.json",
     "yarn.lock",
     "tsconfig.json"
+  ]
+
+  inline_policies = [
+    {
+      name = "EC2Access"
+      policy = jsonencode({
+        Version = "2012-10-17"
+        Statement = [
+          {
+            Effect = "Allow"
+            Action = [
+              "ec2:DescribeInstances",
+              "ec2:StartInstances",
+              "ec2:StopInstances"
+            ]
+            Resource = "*"
+          }
+        ]
+      })
+    }
   ]
 }
 
@@ -52,9 +78,7 @@ resource "aws_scheduler_schedule" "this" {
     input = jsonencode({
       FunctionName   = module.lambda_instance_scheduler.arn
       InvocationType = "Event"
-      Payload = jsonencode({
-        action = local.schedules[count.index].action
-      })
+      Payload        = local.schedules[count.index].payload
     })
   }
 }
